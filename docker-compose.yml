@@ -1,29 +1,39 @@
 services:
   redis:
+    container_name: redis_container
     image: redis:latest
-    restart: always
+    restart: unless-stopped
     ports:
       - '6379:6379'
     volumes:
       - redis_data:/data
+    networks:
+      - postgres
     command:
       - redis-server
       - '--requirepass'
       - isvahan2025
   postgres:
-    image: postgres:15
-    restart: always
-    depends_on:
-      - redis
+    container_name: postgres_container
+    image: postgres:latest
+    restart: unless-stopped
     ports:
       - '5432:5432'
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres:/data/postgres
     environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: isvahan2025
       POSTGRES_DB: compaire_db
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      PGDATA: /data/postgres
+    networks:
+      - postgres
 
 volumes:
-  postgres_data: null
+  postgres: null
+  pgladmin: null
   redis_data: null
+
+networks:
+  postgres:
+    driver: bridge

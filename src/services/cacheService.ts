@@ -11,10 +11,9 @@ class CacheService {
 
   constructor() {
     this.redis = new Redis({
-      host: process.env.REDIS_HOST || "localhost",
-      port: parseInt(process.env.REDIS_PORT || "6379"),
+      host: String(process.env.REDIS_HOST || "localhost"),
+      port: Number(process.env.REDIS_PORT || "6379"),
       password: process.env.REDIS_PASSWORD,
-      retryDelayOnFailover: 100,
       enableReadyCheck: false,
       maxRetriesPerRequest: null,
     });
@@ -142,7 +141,7 @@ class CacheService {
       };
     } catch (error) {
       console.error("Cache stats error:", error);
-      return { connected: false, error: error.message };
+      return { connected: false, error };
     }
   }
 
